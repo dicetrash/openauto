@@ -125,9 +125,9 @@ namespace f1x {
                 ::aasdk::proto::messages::WifiInfoRequest msg;
                 msg.ParseFromArray(buffer.data() + 4, length);
                 OPENAUTO_LOG(info) << "WifiInfoRequest: " << msg.DebugString();
-
+                auto interface = configuration_->getParamFromFile("/etc/hostapd/hostapd.conf","interface");
                 ::aasdk::proto::messages::WifiInfoResponse response;
-                response.set_ip_address(getIP4_("wlan0"));
+                response.set_ip_address(getIP4_(interface));
                 response.set_port(5000);
                 response.set_status(::aasdk::proto::messages::WifiInfoResponse_Status_STATUS_SUCCESS);
 
@@ -138,7 +138,8 @@ namespace f1x {
                 ::aasdk::proto::messages::WifiSecurityReponse response;
 
                 response.set_ssid(configuration_->getParamFromFile("/etc/hostapd/hostapd.conf","ssid").toStdString());
-                response.set_bssid(QNetworkInterface::interfaceFromName("wlan0").hardwareAddress().toStdString());
+                auto interface = configuration_->getParamFromFile("/etc/hostapd/hostapd.conf","interface");
+                response.set_bssid(QNetworkInterface::interfaceFromName(interface).hardwareAddress().toStdString());
                 response.set_key(configuration_->getParamFromFile("/etc/hostapd/hostapd.conf","wpa_passphrase").toStdString());
                 response.set_security_mode(::aasdk::proto::messages::WifiSecurityReponse_SecurityMode_WPA2_PERSONAL);
                 response.set_access_point_type(::aasdk::proto::messages::WifiSecurityReponse_AccessPointType_STATIC);
@@ -147,7 +148,7 @@ namespace f1x {
             }
 
             void AndroidBluetoothServer::sendMessage(const google::protobuf::Message& message, uint16_t type) {
-                int byteSize = message.ByteSize();
+                int byteSize = message.ByteSizeLong();
                 QByteArray out(byteSize + 4, 0);
                 QDataStream ds(&out, QIODevice::ReadWrite);
                 ds << (uint16_t) byteSize;

@@ -38,7 +38,7 @@ App::App(boost::asio::io_service& ioService, aasdk::usb::USBWrapper& usbWrapper,
     , androidAutoEntityFactory_(androidAutoEntityFactory)
     , usbHub_(std::move(usbHub))
     , connectedAccessoriesEnumerator_(std::move(connectedAccessoriesEnumerator))
-    , acceptor_(ioService, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 5000 ))
+    , acceptor_(ioService, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 5000))
     , isStopped_(false)
 {
 
@@ -198,7 +198,8 @@ void App::waitForDevice()
 
 void App::startServerSocket() {
     strand_.dispatch([this, self = this->shared_from_this()]() {
-        OPENAUTO_LOG(info) << "Listening for WIFI clients on port 5000";
+        auto endpt = boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 5000);
+        OPENAUTO_LOG(info) << "Listening for WIFI clients on port 5000" << endpt.address();
         auto socket = std::make_shared<boost::asio::ip::tcp::socket>(ioService_);
         acceptor_.async_accept(
                 *socket,
