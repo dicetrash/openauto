@@ -106,24 +106,24 @@ IService::Pointer ServiceFactory::createBluetoothService(aasdk::messenger::IMess
 
 IService::Pointer ServiceFactory::createInputService(aasdk::messenger::IMessenger::Pointer messenger)
 {
+    using aasdk::proto::enums::VideoResolution_Enum;
     QRect videoGeometry;
-    switch(configuration_->getVideoResolution())
-    {
-    case aasdk::proto::enums::VideoResolution::_720p:
-        videoGeometry = QRect(0, 0, 1280, 720);
-        break;
-
-    case aasdk::proto::enums::VideoResolution::_1080p:
-        videoGeometry = QRect(0, 0, 1920, 1080);
-        break;
-
-    default:
-        videoGeometry = QRect(0, 0, 800, 480);
-        break;
-    }
-
     QScreen* screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen == nullptr ? QRect(0, 0, 1, 1) : screen->geometry();
+    std::map<VideoResolution_Enum, QRect> resolutions {
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_800x480, {0, 0, 800, 480} },
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_720x1280,{0, 0, 720, 1280 }},
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_1280x720,{0, 0, 1280, 720 }},
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_1080x1920,{0, 0, 1080, 1920 }},
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_1920x1080,{0, 0, 1920, 1080 }},
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_1440x2560,{0, 0, 1440, 2560 }},
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_2560x1440,{0, 0, 2560, 1440 }},
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_2160x3840,{0, 0, 2160, 3840 }},
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_3840x2160,{0, 0, 3840, 2160} }
+    };
+
+    videoGeometry = resolutions.at(configuration_->getVideoResolution());
+
     projection::IInputDevice::Pointer inputDevice(std::make_shared<projection::InputDevice>(*QApplication::instance(), configuration_, std::move(screenGeometry), std::move(videoGeometry)));
 
     return std::make_shared<InputService>(ioService_, messenger, std::move(inputDevice));

@@ -144,7 +144,7 @@ private:
     bool instantPlay_;
 
     aasdk::proto::enums::VideoFPS::Enum videoFPS_;
-    aasdk::proto::enums::VideoResolution::Enum videoResolution_;
+    aasdk::proto::enums::VideoResolution::Enum videoResolution_ ;
     size_t screenDPI_;
     int32_t omxLayerIndex_;
     QRect videoMargins_;

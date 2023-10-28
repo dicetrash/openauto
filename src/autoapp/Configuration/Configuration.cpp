@@ -19,6 +19,8 @@
 #include <f1x/openauto/autoapp/Configuration/Configuration.hpp>
 #include <f1x/openauto/Common/Log.hpp>
 #include <QTouchDevice>
+#include <QScreen>
+#include <QGuiApplication>
 
 namespace f1x
 {
@@ -87,6 +89,43 @@ const std::string Configuration::cInputBackButtonKey = "Input.BackButton";
 const std::string Configuration::cInputEnterButtonKey = "Input.EnterButton";
 const std::string Configuration::cInputNavButtonKey = "Input.NavButton";
 
+aasdk::proto::enums::VideoResolution_Enum getBestFitResolution() {
+    using aasdk::proto::enums::VideoResolution_Enum;
+    VideoResolution_Enum videoGeometry = VideoResolution_Enum::VideoResolution_Enum_VIDEO_800x480;
+
+    QScreen* screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen == nullptr ? QRect(0, 0, 1, 1) : screen->geometry();
+    int screenx = screenGeometry.width();
+    int screeny = screenGeometry.height();
+
+    struct VideoRes {
+        VideoResolution_Enum setPoint;
+        int x;
+        int y;
+    };
+
+    std::list<VideoRes> resolutions {
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_800x480, 800, 480 },
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_720x1280, 720, 1280 },
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_1280x720, 1280, 720 },
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_1080x1920, 1080, 1920 },
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_1920x1080, 1920, 1080 },
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_1440x2560, 1440, 2560 },
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_2560x1440, 2560, 1440 },
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_2160x3840, 2160, 3840 },
+        { VideoResolution_Enum::VideoResolution_Enum_VIDEO_3840x2160, 3840, 2160 }
+    };
+
+    for(VideoRes& vidRes: resolutions) {
+        if ((vidRes.x > screenx) || (vidRes.y > screeny)) {
+          continue;
+        }
+        videoGeometry = vidRes.setPoint;
+    }
+
+    return videoGeometry;
+}
+
 Configuration::Configuration()
 {
     this->load();
@@ -109,7 +148,7 @@ void Configuration::load()
         hideMenuToggle_ = iniConfig.get<bool>(cGeneralHideMenuToggleKey, false);
         hideAlpha_ = iniConfig.get<bool>(cGeneralHideAlphaKey, false);
         showLux_ = iniConfig.get<bool>(cGeneralShowLuxKey, false);
-        showCursor_ = iniConfig.get<bool>(cGeneralShowCursorKey, false);
+        showCursor_ = iniConfig.get<bool>(cGeneralShowCursorKey, true);
         hideBrightnessControl_ = iniConfig.get<bool>(cGeneralHideBrightnessControlKey, false);
         hideWarning_ = iniConfig.get<bool>(cGeneralHideWarningKey, false);
         showNetworkinfo_ = iniConfig.get<bool>(cGeneralShowNetworkinfoKey, false);
@@ -124,7 +163,7 @@ void Configuration::load()
                                                                                              aasdk::proto::enums::VideoFPS::_30));
 
         videoResolution_ = static_cast<aasdk::proto::enums::VideoResolution::Enum>(iniConfig.get<uint32_t>(cVideoResolutionKey,
-                                                                                                           aasdk::proto::enums::VideoResolution::_480p));
+                                                                                                           getBestFitResolution()));
         screenDPI_ = iniConfig.get<size_t>(cVideoScreenDPIKey, 140);
 
         omxLayerIndex_ = iniConfig.get<int32_t>(cVideoOMXLayerIndexKey, 1);
@@ -161,7 +200,7 @@ void Configuration::reset()
     hideMenuToggle_ = false;
     hideAlpha_ = false;
     showLux_ = false;
-    showCursor_ = false;
+    showCursor_ = true;
     hideBrightnessControl_ = false;
     hideWarning_ = false;
     showNetworkinfo_ = false;
@@ -172,7 +211,7 @@ void Configuration::reset()
     showAutoPlay_ = false;
     instantPlay_ = false;
     videoFPS_ = aasdk::proto::enums::VideoFPS::_30;
-    videoResolution_ = aasdk::proto::enums::VideoResolution::_480p;
+    videoResolution_ = getBestFitResolution();
     screenDPI_ = 140;
     omxLayerIndex_ = 1;
     videoMargins_ = QRect(0, 0, 0, 0);
