@@ -5,7 +5,7 @@ pkgdesc="Openauto android auto headunit app"
 license=('GPL2')
 arch=('x86_64' 'aarch64')
 depends=('libusb')
-makedepends=('cmake' 'gcc' 'protoc')
+makedepends=('cmake' 'gcc' 'protobuf' 'boost' 'qt5-base' 'qt5-connectivity')
 source=(
   'https://github.com/dicetrash/aasdk/archive/refs/heads/adding-more-resolutions.zip'
   'https://github.com/dicetrash/openauto/archive/refs/heads/og-windows.zip'
@@ -13,20 +13,22 @@ source=(
 md5sums=('SKIP' 'SKIP')
 
 build() {
-	cd ${srcdir}/aasdk-adding-more-resolutions
+	#mv ${srcdir}/aasdk-adding-more-resolutions ${srcdir}/aasdk
+	#mv ${srcdir}/openauto-og-windows ${srcdir}/openauto
+	cd ${srcdir}/aasdk
 	cmake .
 	make
-	mv ${srcdir}/aasdk-adding-more-resolutions ${srcdir}/aasdk
-	cd ${srcdir}/openauto-og-windows
+	cd ${srcdir}/openauto
 	cmake .
 	make
 }
 
 package() {
-	cd ${srcdir}/openauto-og-windows
+	cd ${srcdir}/openauto
 	mkdir -p ${pkgdir}/usr/bin
 	mkdir -p ${pkgdir}/usr/share/polkit-1/actions
 	mkdir -p ${pkgdir}/usr/share/applications
+	mkdir -p ${pkgdir}/usr/share/.icons/hicolor/48x48/
 	cp bin/autoapp ${pkgdir}/usr/bin/
 	cp assets/openauto.png ${pkgdir}/usr/share/.icons/hicolor/48x48/openauto.png
 	cp builds/org.openauto.openauto.policy ${pkgdir}/usr/share/polkit-1/actions/
