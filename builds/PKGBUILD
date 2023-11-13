@@ -4,8 +4,8 @@ pkgrel=1
 pkgdesc="Openauto android auto headunit app"
 license=('GPL2')
 arch=('x86_64' 'aarch64')
-depends=('libusb')
-makedepends=('cmake' 'gcc' 'protobuf' 'boost' 'qt5-base' 'qt5-connectivity')
+depends=('libusb' 'qt5-base')
+makedepends=('cmake' 'gcc' 'protobuf' 'boost' 'qt5-tools' 'qt5-connectivity' 'libusb' 'rtaudio' 'taglib' 'gpsd')
 source=(
   'https://github.com/dicetrash/aasdk/archive/refs/heads/adding-more-resolutions.zip'
   'https://github.com/dicetrash/openauto/archive/refs/heads/og-windows.zip'
