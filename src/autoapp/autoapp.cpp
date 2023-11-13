@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
     }
 
     // mainWindow.showFullScreen();
-    mainWindow.show();
+    mainWindow.showMinimized();
 
     aasdk::usb::USBWrapper usbWrapper(usbContext);
     aasdk::usb::AccessoryModeQueryFactory queryFactory(usbWrapper, ioService);

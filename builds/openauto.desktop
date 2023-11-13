@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=openauto
+Categories=Utility;
+Exec=pkexec /usr/bin/autoapp
+Icon=/usr/share/.icons/hicolor/48x48/openauto.png
+Terminal=false
+Type=Application
+Comment=OpenAuto android auto headunit app

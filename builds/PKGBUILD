@@ -1,0 +1,34 @@
+pkgname=openauto
+pkgver=0_1
+pkgrel=1
+pkgdesc="Openauto android auto headunit app"
+license=('GPL2')
+arch=('x86_64' 'aarch64')
+depends=('libusb')
+makedepends=('cmake' 'gcc' 'protoc')
+source=(
+  'https://github.com/dicetrash/aasdk/archive/refs/heads/adding-more-resolutions.zip'
+  'https://github.com/dicetrash/openauto/archive/refs/heads/og-windows.zip'
+)
+md5sums=('SKIP' 'SKIP')
+
+build() {
+	cd ${srcdir}/aasdk-adding-more-resolutions
+	cmake .
+	make
+	mv ${srcdir}/aasdk-adding-more-resolutions ${srcdir}/aasdk
+	cd ${srcdir}/openauto-og-windows
+	cmake .
+	make
+}
+
+package() {
+	cd ${srcdir}/openauto-og-windows
+	mkdir -p ${pkgdir}/usr/bin
+	mkdir -p ${pkgdir}/usr/share/polkit-1/actions
+	mkdir -p ${pkgdir}/usr/share/applications
+	cp bin/autoapp ${pkgdir}/usr/bin/
+	cp assets/openauto.png ${pkgdir}/usr/share/.icons/hicolor/48x48/openauto.png
+	cp builds/org.openauto.openauto.policy ${pkgdir}/usr/share/polkit-1/actions/
+	cp builds/openauto.desktop ${pkgdir}/usr/share/applications/
+}
