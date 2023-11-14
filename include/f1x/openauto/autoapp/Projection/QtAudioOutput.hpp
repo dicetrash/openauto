@@ -37,7 +37,7 @@ class QtAudioOutput: public QObject, public IAudioOutput
     Q_OBJECT
 
 public:
-    QtAudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate);
+    QtAudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate, int audioDevice);
     bool open() override;
     void write(aasdk::messenger::Timestamp::ValueType, const aasdk::common::DataConstBuffer& buffer) override;
     void start() override;
@@ -63,6 +63,7 @@ private:
     QIODevice * audioBuffer_;
     std::unique_ptr<QAudioOutput> audioOutput_;
     bool playbackStarted_;
+    int deviceNumber_ = 0;
 };
 
 }

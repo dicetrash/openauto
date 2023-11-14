@@ -30,9 +30,10 @@ namespace autoapp
 namespace projection
 {
 
-QtAudioOutput::QtAudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate)
+QtAudioOutput::QtAudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_t sampleRate, int device)
     : audioBuffer_(nullptr)
     , playbackStarted_(false)
+    , deviceNumber_(device)
 {
     audioFormat_.setChannelCount(channelCount);
     audioFormat_.setSampleRate(sampleRate);
@@ -55,7 +56,8 @@ QtAudioOutput::QtAudioOutput(uint32_t channelCount, uint32_t sampleSize, uint32_
 void QtAudioOutput::createAudioOutput()
 {
     OPENAUTO_LOG(debug) << "[QtAudioOutput] create.";
-    audioOutput_ = std::make_unique<QAudioOutput>(QAudioDeviceInfo::defaultOutputDevice(), audioFormat_);
+    auto const& deviceList = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
+    audioOutput_ = std::make_unique<QAudioOutput>(deviceList[deviceNumber_], audioFormat_);
 }
 
 bool QtAudioOutput::open()

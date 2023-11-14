@@ -121,6 +121,8 @@ public:
     virtual void setSpeechAudioChannelEnabled(bool value) = 0;
     virtual AudioOutputBackendType getAudioOutputBackendType() const = 0;
     virtual void setAudioOutputBackendType(AudioOutputBackendType value) = 0;
+    virtual void setAudioOutputDevice(int value) = 0;
+    virtual int getAudioOutputDevice() const = 0;
 };
 
 }

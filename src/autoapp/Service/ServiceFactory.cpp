@@ -131,11 +131,13 @@ IService::Pointer ServiceFactory::createInputService(aasdk::messenger::IMessenge
 
 void ServiceFactory::createAudioServices(ServiceList& serviceList, aasdk::messenger::IMessenger::Pointer messenger)
 {
+    auto device = configuration_->getAudioOutputDevice();
     if(configuration_->musicAudioChannelEnabled())
     {
+
         auto mediaAudioOutput = configuration_->getAudioOutputBackendType() == configuration::AudioOutputBackendType::RTAUDIO ?
                     std::make_shared<projection::RtAudioOutput>(2, 16, 48000) :
-                    projection::IAudioOutput::Pointer(new projection::QtAudioOutput(2, 16, 48000), std::bind(&QObject::deleteLater, std::placeholders::_1));
+                    projection::IAudioOutput::Pointer(new projection::QtAudioOutput(2, 16, 48000, device), std::bind(&QObject::deleteLater, std::placeholders::_1));
 
         serviceList.emplace_back(std::make_shared<MediaAudioService>(ioService_, messenger, std::move(mediaAudioOutput)));
     }
@@ -144,14 +146,14 @@ void ServiceFactory::createAudioServices(ServiceList& serviceList, aasdk::messen
     {
         auto speechAudioOutput = configuration_->getAudioOutputBackendType() == configuration::AudioOutputBackendType::RTAUDIO ?
                     std::make_shared<projection::RtAudioOutput>(1, 16, 16000) :
-                    projection::IAudioOutput::Pointer(new projection::QtAudioOutput(1, 16, 16000), std::bind(&QObject::deleteLater, std::placeholders::_1));
+                    projection::IAudioOutput::Pointer(new projection::QtAudioOutput(1, 16, 16000, device), std::bind(&QObject::deleteLater, std::placeholders::_1));
 
         serviceList.emplace_back(std::make_shared<SpeechAudioService>(ioService_, messenger, std::move(speechAudioOutput)));
     }
 
     auto systemAudioOutput = configuration_->getAudioOutputBackendType() == configuration::AudioOutputBackendType::RTAUDIO ?
                 std::make_shared<projection::RtAudioOutput>(1, 16, 16000) :
-                projection::IAudioOutput::Pointer(new projection::QtAudioOutput(1, 16, 16000), std::bind(&QObject::deleteLater, std::placeholders::_1));
+                projection::IAudioOutput::Pointer(new projection::QtAudioOutput(1, 16, 16000, device), std::bind(&QObject::deleteLater, std::placeholders::_1));
 
     serviceList.emplace_back(std::make_shared<SystemAudioService>(ioService_, messenger, std::move(systemAudioOutput)));
 }

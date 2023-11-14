@@ -65,6 +65,7 @@ const std::string Configuration::cVideoMarginHeight = "Video.MarginHeight";
 const std::string Configuration::cAudioMusicAudioChannelEnabled = "Audio.MusicAudioChannelEnabled";
 const std::string Configuration::cAudioSpeechAudioChannelEnabled = "Audio.SpeechAudioChannelEnabled";
 const std::string Configuration::cAudioOutputBackendType = "Audio.OutputBackendType";
+const std::string Configuration::cAudioOutputDevice = "Audio.OutputDevice";
 
 const std::string Configuration::cBluetoothAdapterTypeKey = "Bluetooth.AdapterType";
 const std::string Configuration::cBluetoothRemoteAdapterAddressKey = "Bluetooth.RemoteAdapterAddress";
@@ -223,6 +224,7 @@ void Configuration::reset()
     musicAudioChannelEnabled_ = true;
     speechAudiochannelEnabled_ = true;
     audioOutputBackendType_ = AudioOutputBackendType::QT;
+    audioOutputDevice_ = 4;
 }
 
 void Configuration::save()
@@ -595,6 +597,16 @@ AudioOutputBackendType Configuration::getAudioOutputBackendType() const
 void Configuration::setAudioOutputBackendType(AudioOutputBackendType value)
 {
     audioOutputBackendType_ = value;
+}
+
+void Configuration::setAudioOutputDevice(int value)
+{
+	audioOutputDevice_ = value;
+}
+
+int Configuration::getAudioOutputDevice() const
+{
+    return audioOutputDevice_;
 }
 
 QString Configuration::getCSValue(QString searchString) const

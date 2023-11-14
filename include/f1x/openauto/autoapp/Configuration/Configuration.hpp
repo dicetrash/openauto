@@ -117,6 +117,8 @@ public:
     void setSpeechAudioChannelEnabled(bool value) override;
     AudioOutputBackendType getAudioOutputBackendType() const override;
     void setAudioOutputBackendType(AudioOutputBackendType value) override;
+    void setAudioOutputDevice(int value) override;
+    int getAudioOutputDevice() const override;
 
 private:
     void readButtonCodes(boost::property_tree::ptree& iniConfig);
@@ -156,6 +158,7 @@ private:
     bool musicAudioChannelEnabled_;
     bool speechAudiochannelEnabled_;
     AudioOutputBackendType audioOutputBackendType_;
+    int audioOutputDevice_ = 4;
 
     static const std::string cConfigFileName;
 
@@ -191,6 +194,7 @@ private:
     static const std::string cAudioMusicAudioChannelEnabled;
     static const std::string cAudioSpeechAudioChannelEnabled;
     static const std::string cAudioOutputBackendType;
+    static const std::string cAudioOutputDevice;
 
     static const std::string cBluetoothAdapterTypeKey;
     static const std::string cBluetoothRemoteAdapterAddressKey;
